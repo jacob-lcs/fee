@@ -6,6 +6,7 @@ import DATE_FORMAT from '~/src/constants/date_format'
 import SaveLogBase from '~/src/commands/save_log/base'
 import LKafka from '~/src/library/kafka'
 import BaseClientConfig from '~/src/configs/kafka'
+import { da } from 'date-fns/locale'
 
 let jsonWriteStreamPool = new Map()
 let rawLogWriteStreamPool = new Map()
@@ -55,7 +56,7 @@ class Save2Log extends SaveLogBase {
     }, MAX_RUN_TIME * 1.5)
 
     client.on('ready', () => {
-      client.subscribe(['fee-dig-www-log'])
+      client.subscribe(['fe-test'])
       client.consume()
       this.log(`[pid:${pid}]kafka 链接成功, 开始录入数据`)
     }).on('data', async (data) => {
@@ -63,7 +64,9 @@ class Save2Log extends SaveLogBase {
       let content = data.value.toString()
 
       // 获取日志时间, 没有原始日志时间则直接跳过
-      let logCreateAt = this.parseLogCreateAt(content)
+      // let logCreateAt = this.parseLogCreateAt(content)
+      let logCreateAt = moment().unix()
+      this.log('日志创建时间为 => ', logCreateAt)
       if (_.isFinite(logCreateAt) === false || logCreateAt <= 0) {
         this.log('日志时间不合法, 自动跳过')
         return

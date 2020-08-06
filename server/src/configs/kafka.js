@@ -1,6 +1,8 @@
 import env from '~/src/configs/env'
 
 const production = {
+  'group.id': 'fe-test',
+  'metadata.broker.list': 'localhost:9092',
 }
 
 const testing = production

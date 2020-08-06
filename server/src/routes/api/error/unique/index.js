@@ -50,7 +50,7 @@ function parseQueryParam (request) {
 
 let getErrorDistribution = RouterConfigBuilder.routerConfigBuilder('/api/error/distribution/summary', RouterConfigBuilder.METHOD_TYPE_GET, async (req, res) => {
   const projectId = _.get(req, ['fee', 'project', 'projectId'], 0)
-
+  console.log('请求的 projectID 为 => ', projectId)
   let errorList = await MErrorSummary.getErrorNameDistributionInLast7DayWithCache(projectId)
 
   res.send(API_RES.showResult(errorList))

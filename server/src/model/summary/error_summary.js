@@ -143,6 +143,7 @@ async function get (projectId, countAt, countType, errorType, errorName, urlPath
  */
 async function getErrorNameDistributionListInSameMonth (projectId, startAt, endAt, countType, errorNameList = [], url = {}) {
   const tableName = getTableName(projectId, startAt)
+  console.log('tableName => ', tableName)
   let countAtTimeList = DatabaseUtil.getDatabaseTimeList(startAt, endAt, countType)
   let extendCondition = {}
   if (url.length > 0) {
@@ -362,6 +363,7 @@ async function getErrorNameDistributionInSameMonth (projectId, startAt, endAt, m
       Logger.warn('getErrorNameDistributionInSameMonth查询错误, 错误信息=>', e)
       return []
     })
+    console.log('rawDistributionList => ', rawDistributionList)
   let distributionList = []
   for (let rawDistribution of rawDistributionList) {
     let errorName = _.get(rawDistribution, ['error_name'], '')
@@ -380,13 +382,13 @@ async function getErrorNameDistributionInSameMonth (projectId, startAt, endAt, m
  * @param {*} projectId
  * @param {*} forceUpdate 是否强制更新缓存
  */
-async function getErrorNameDistributionByTimeWithCache (projectId, startAt, endAt, forceUpdate = false) {
+async function getErrorNameDistributionByTimeWithCache (projectId, startAt, endAt, forceUpdate = true) {
   let distributionList = []
   let distributionMap = {}
   for (let timeAt = startAt; timeAt <= endAt; timeAt += 86400) {
     let key = getRedisKey(REDIS_KEY_ERROR_NAME_DISTRIBUTION_CACHE, projectId, timeAt)
     let redisDistributionList = await redis.asyncGet(key)
-
+    console.log('redisDistributionList => ', redisDistributionList)
     if (_.isEmpty(redisDistributionList) || forceUpdate) {
       redisDistributionList = await getErrorNameDistributionInSameMonth(projectId, moment.unix(timeAt).startOf('day').unix(), moment.unix(timeAt).endOf('day').unix())
       await redis.asyncSetex(key, 86400, redisDistributionList)

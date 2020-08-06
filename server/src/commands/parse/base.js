@@ -87,7 +87,7 @@ class ParseBase extends Base {
     for (let currentAt = startAt; currentAt <= endAt; currentAt = currentAt + 60) {
       let currentAtMoment = moment.unix(currentAt)
       let absoluteLogUri = LKafka.getAbsoluteLogUriByType(currentAt, LKafka.LOG_TYPE_JSON)
-      that.log(`开始处理${currentAtMoment.format(that.DATE_FORMAT_DISPLAY)}的记录, log文件地址 => ${absoluteLogUri}`)
+      that.log(`开始处理${currentAtMoment.format(that.DATE_FORMAT_DISPLAY)}的记录, log文件地址为 => ${absoluteLogUri}`)
       let logUri = LKafka.getAbsoluteLogUriByType(currentAt, LKafka.LOG_TYPE_JSON)
       if (fs.existsSync(logUri) === false) {
         that.log(`log文件不存在, 自动跳过 => ${absoluteLogUri}`)
@@ -97,8 +97,10 @@ class ParseBase extends Base {
       await new Promise(function (resolve, reject) {
         let onDataReceive = async (data, next) => {
           let record = JSON.parse(data)
+          // that.log(record)
           if (that.isLegalRecord(record)) {
-            that.processRecordAndCacheInProjectMap(record)
+            that.log('在这里')
+            await that.processRecordAndCacheInProjectMap(record)
           }
           next()
         }
@@ -125,6 +127,7 @@ class ParseBase extends Base {
    * @return {Boolean}
    */
   isLegalRecord (record) {
+    this.log('来了？')
     this.mustBeOverride()
     // let recordType = get(record, ['type'], '')
     // let code = get(record, ['code'], '')
@@ -166,6 +169,8 @@ class ParseBase extends Base {
    * @param {Object} record
    */
   async processRecordAndCacheInProjectMap (record) {
+    this.log(record)
+    console.log('到这了')
     this.mustBeOverride()
     // let projectId = get(record, ['project_id'], 0)
     // let durationMs = get(record, ['detail', 'duration_ms'], 0)
@@ -199,6 +204,8 @@ class ParseBase extends Base {
    * [必须覆盖]将数据同步到数据库中
    */
   async save2DB () {
+    this.log('开始了？')
+    console.log('开始了吗？')
     this.mustBeOverride()
     let processRecordCount = 0
     let successSaveCount = 0
@@ -261,6 +268,7 @@ class ParseBase extends Base {
   }
 
   mustBeOverride () {
+    this.log('退出了？')
     this.warn('注意, 这里有个方法没有覆盖')
     this.warn('当场退出←_←')
     process.exit(0)

@@ -23,7 +23,7 @@ body {
   margin: 0;
   padding: 0;
   min-width: 1200px;
-  overflow-x: auto;
+  overflow-x: scroll;
 }
 
 #app {

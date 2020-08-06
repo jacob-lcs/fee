@@ -1,3 +1,10 @@
+/*
+ * @Description: 
+ * @Autor: liuchengshuai001
+ * @Date: 2020-07-23 20:53:02
+ * @LastEditors: liuchengshuai001
+ * @LastEditTime: 2020-08-06 10:43:34
+ */
 // mysql 配置。 mysql 使用参见 https://dev.mysql.com/doc/refman/8.0/en/
 import env from '~/src/configs/env'
 
@@ -11,7 +18,7 @@ const development = {
   host: '127.0.0.1',
   port: '3306',
   user: 'root',
-  password: '123456',
+  password: '',
   database: 'platform'
 }
 // 测试环境配置

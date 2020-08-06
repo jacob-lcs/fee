@@ -2,7 +2,7 @@
 创建platform数据库, 然后执行`npm run fee Utils:GenerateSQL 1,2,3,4,5,6,7,8,9,10 '2018-01' '2020-10' > init.sql` 生成数据库SQL, 执行`mysql -u root -h 127.0.0.1  platform -p < init.sql`, 执行建表语句
 # 启动server
 1.  启动项目 => `npm run watch` 启动babel监控, `npm run dev` 启动项目.
-2.  访问 http://localhost:3000/ 查看效果
+2.  访问 http://localhost:3001/ 查看效果
 3.  构建完成后, 目录结构如下 
     ```text
     -   主目录(~)

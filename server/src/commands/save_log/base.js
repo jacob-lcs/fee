@@ -11,6 +11,7 @@ import _ from 'lodash'
 import MProject from '~/src/model/project/project'
 import LKafka from '~/src/library/kafka'
 import path from 'path'
+import { da } from 'date-fns/locale'
 
 let jsonWriteStreamPool = new Map()
 let rawLogWriteStreamPool = new Map()
@@ -138,6 +139,7 @@ class SaveLogBase extends Base {
    */
   parseLogCreateAt (data) {
     let nowAt = moment().unix()
+    this.log('data 类型为 => ', typeof(data), data)
     if (_.isString(data) === false) {
       return nowAt
     }
@@ -157,10 +159,12 @@ class SaveLogBase extends Base {
       record.common = record.pub
     }
 
+    console.log('获取到的时间为', info[0])
     let logAtMoment = moment(info[0], moment.ISO_8601)
     let logAt = 0
     if (moment.isMoment(logAtMoment) && logAtMoment.isValid()) {
-      logAt = logAtMoment.unix()
+      // logAt = logAtMoment.unix()
+      logAt = Math.round(new Date(info[0]).getTime() / 1000)
     } else {
       this.log(`无法解析日志记录时间 => ${info[0]}, 自动跳过`)
     }
@@ -175,11 +179,14 @@ class SaveLogBase extends Base {
    */
   async parseLog (data, projectMap) {
     const info = data.split('\t')
-    let url = _.get(info, [15], '')
-
+    this.log(info)
+    let url = _.get(info, [14], '')
+    // this.log(`生成的 URL 为 => ${url}`)
+    url = url.split(' ')[1]
     const urlQS = queryString.parseUrl(url)
+    this.log(urlQS)
     let record = _.get(urlQS, ['query', 'd'], '[]')
-
+    this.log(`===${record}`)
     try {
       record = JSON.parse(record)
     } catch (err) {
@@ -215,6 +222,7 @@ class SaveLogBase extends Base {
     record.project_name = record.common.pid
     let currentAt = moment().unix()
     let logCreateAt = this.parseLogCreateAt(data)
+    console.log('入库时间为 => ', logCreateAt, '当前时间为 => ', currentAt)
     // 如果入库时间距离现在大于10天, 则认为是不合法数据(kafka中只会存7天以内的数据, 入库时间超出上下10天, 都不正常)
     if (Math.abs(logCreateAt - currentAt) > 864000) {
       this.log('入库时间超出阈值, 自动跳过 finialTimeAt=>', logCreateAt)

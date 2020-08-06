@@ -60,7 +60,7 @@ module.exports = {
       return pathname.indexOf('/api/') !== -1
     },
     host: {
-      target: _.get(debug, ['localServer', 'host', 'target'], 'http://localhost:3000'), // 本地mock服务器地址
+      target: _.get(debug, ['localServer', 'host', 'target'], 'http://localhost:3001'), // 本地mock服务器地址
       changeOrigin: true, // needed for virtual hosted sites
       ws: true // proxy websockets
     }

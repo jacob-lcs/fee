@@ -33,7 +33,7 @@ const MUILT_T_O_SYSTEM_COLLECTION = 't_o_system_collection' // 设备记录表, 
 const MUILT_T_O_USER_FIRST_LOGIN_AT = 't_o_user_first_login_at' // 用户首次登陆表, 用于统计新课, 按项目分表, 命名规则: t_o_customer_first_login_at_项目id
 const MUILT_T_R_ERROR_SUMMARY = 't_r_error_summary' // 错误统计表,用于统计错误类型，错误名字
 
-let urlList = ['http://127.0.0.1:3000/template1', 'http://127.0.0.1:3000/template2', 'http://127.0.0.1:3000/template3']
+let urlList = ['http://127.0.0.1:3001/template1', 'http://127.0.0.1:3001/template2', 'http://127.0.0.1:3001/template3']
 let errorNameList = ['代理异常_Response Code', '代理异常_Response Timeout', 'JS异常_IMAGE_LOAD_ERROR', '加载页面异常_ERR_ABORTED']
 
 async function getSQL () {
@@ -499,8 +499,8 @@ TABLE_TEMPLATE[SINGLE_T_O_ALARM_CONFIG] = `(
   \`is_enable\` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否开启本条报警配置1：是0：否',
   \`note\` varchar(255) NOT NULL DEFAULT '' COMMENT '配置说明',
   \`is_delete\` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否删除(1 => 是, 0 => 否)',
-  \`create_ucid\` varchar(40) NOT NULL DEFAULT '' COMMENT '创建此记录的人',
-  \`update_ucid\` varchar(40) NOT NULL DEFAULT '' COMMENT '更新此记录的人',
+  \`create_ucid\` varchar(20) NOT NULL DEFAULT '' COMMENT '创建此记录的人',
+  \`update_ucid\` varchar(20) NOT NULL DEFAULT '' COMMENT '更新此记录的人',
   \`create_time\` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建此记录的时间',
   \`update_time\` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新此记录的时间',
   PRIMARY KEY (\`id\`)

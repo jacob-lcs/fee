@@ -23,6 +23,7 @@ class SummaryError extends Base {
   }
 
   async execute (args, options) {
+    this.log('跑起来了')
     let { countAtTime, countType } = args
     if (this.isArgumentsLegal(args, options) === false) {
       this.warn('参数不正确, 自动退出')

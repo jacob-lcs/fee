@@ -61,6 +61,7 @@ class ParseMonitor extends ParseBase {
    * 更新记录
    */
   async processRecordAndCacheInProjectMap(record) {
+    this.log('processRecordAndCacheInProjectMap 运行')
     let projectId = _.get(record, ['project_id'], 0)
     let visitAt = _.get(record, ['time'], 0)
     let errorType = _.get(record, ['code'], '')
@@ -127,6 +128,7 @@ class ParseMonitor extends ParseBase {
       md5,
       extraData
     }
+    // this.log(monitorRecord)
 
     let visitAtMap = new Map()
     let monitorRecordList = []
@@ -136,18 +138,25 @@ class ParseMonitor extends ParseBase {
         monitorRecordList = visitAtMap.get(visitAtTime)
       }
     }
+    this.log('喵喵喵1 => ', visitAtTime)
     monitorRecordList.push(monitorRecord)
     visitAtMap.set(visitAtTime, monitorRecordList)
+    this.log('喵喵喵 => ', visitAtMap)
     this.projectMap.set(projectId, visitAtMap)
+    this.log(this.projectMap)
     return true
   }
 
   async save2DB() {
+    this.log('到这了')
     let totalRecordCount = this.getRecordCountInProjectMap()
     let processRecordCount = 0
     let successSaveCount = 0
+    this.log('projectMap 为 => ', this.projectMap)
     for (let [projectId, visitAtMap] of this.projectMap) {
+      this.log(JSON.stringify(visitAtMap))
       for (let [visitAtTime, monitorMap] of visitAtMap) {
+        this.log(visitAtTime)
         let visitAt = moment(visitAtTime, DATE_FORMAT.DATABASE_BY_MINUTE).unix()
         let tenMinutesAgoAt = visitAt - 10 * 60
         let oneMinuteLaterAt = visitAt + 60
@@ -179,10 +188,11 @@ class ParseMonitor extends ParseBase {
             md5: monitorRecord.md5,
             log_at: visitAt
           }
+          this.log('sqlParams => ', sqlParams)
           // 对接收到的参数做进一步校验，因为数据库里面的类型与传过来的类型不一致
           // 比如http_code在一些情况下传来的是空字符串，数据库中存放的是int型
           const sqlRecord = Util.handleEmptyData(sqlParams)
-
+          this.log('sqlParams => ', sqlParams)
           // monitor查询参数
           let monitorParams = {
             projectId: projectId,
@@ -206,6 +216,7 @@ class ParseMonitor extends ParseBase {
           const key = visitAt + '' + md5
           if (uniqueSet.has(key) === false) {
             let monitorRes = await MCommon.insertInto(monitorExtParams)
+            this.log('monitorRes => ', monitorRes)
             sqlRecord.monitor_ext_id = monitorRes[0]
             monitorParams.datas = sqlRecord
             let isSuccess = await MCommon.replaceInto(monitorParams)
@@ -225,9 +236,11 @@ class ParseMonitor extends ParseBase {
    */
   getRecordCountInProjectMap() {
     let totalCount = 0
+    this.log('this.projectMap => ', this.projectMap)
     for (let [projectId, visitAtMap] of this.projectMap) {
       for (let [visitAtTime, monitorMap] of visitAtMap) {
         for (let monitorRecord of monitorMap) {
+          this.log(monitorRecord)
           totalCount = totalCount + 1
         }
       }

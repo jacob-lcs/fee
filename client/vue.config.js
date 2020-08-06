@@ -48,6 +48,6 @@ module.exports = {
   devServer: {
     // 绕过主机检查
     disableHostCheck: true,
-    proxy: 'http://localhost:3000/'
+    proxy: 'http://localhost:3001/'
   }
 }

@@ -66,7 +66,7 @@ yum install rsyslog-kafka.x86_64
 
 编辑配置文件（路径 `/etc/rsyslog.conf`  ），在配置文件 `#### MODULES ####` 的下面添加如下配置（或者在 `/etc/rsyslogd/` 目录下添加 `XXX.conf` 配置文件）
 
-```plain
+```
 # 加载omkafka和imfile模块
 module(load="omkafka")
 module(load="imfile")

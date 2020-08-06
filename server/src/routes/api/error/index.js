@@ -25,6 +25,7 @@ function parseQueryParam (request) {
   let errorNameList = []
   try {
     errorNameList = JSON.parse(errorNameListJson)
+    console.log('errorNameList => ', errorNameList)
   } catch (error) {
     errorNameList = []
   }
@@ -49,13 +50,14 @@ function parseQueryParam (request) {
 
 let getErrorDistribution = RouterConfigBuilder.routerConfigBuilder('/api/error/distribution/summary', RouterConfigBuilder.METHOD_TYPE_GET, async (req, res) => {
   const projectId = _.get(req, ['fee', 'project', 'projectId'], 0)
+  console.log('请求到的 projectID 为 => ', projectId)
   let {
     startAt,
     endAt
   } = parseQueryParam(req)
   startAt = moment.unix(startAt).startOf(DATE_FORMAT.UNIT.DAY).unix()
   endAt = moment.unix(endAt).endOf(DATE_FORMAT.UNIT.DAY).unix()
-
+  console.log(startAt, endAt)
   let errorList = await MErrorSummary.getErrorNameDistributionByTimeWithCache(projectId, startAt, endAt)
   res.send(API_RES.showResult(errorList))
 })

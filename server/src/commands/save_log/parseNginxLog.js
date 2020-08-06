@@ -25,10 +25,11 @@ class NginxParseLog extends SaveLogBase {
     let logCounter = 0
     let legalLogCounter = 0
     let nginxLogFilePath = commonConfig.nginxLogFilePath
-    let timeAt = moment().unix() - 60
-    let timeMoment = moment.unix(timeAt)
-    let formatStr = timeMoment.format('/YYYY/MM/DD/HH/mm')
-    let logAbsolutePath = `${nginxLogFilePath}${formatStr}.log`
+    // let timeAt = moment().unix() - 60
+    // let timeMoment = moment.unix(timeAt)
+    // let formatStr = timeMoment.format('/YYYY/MM/DD/HH/mm')
+    // let logAbsolutePath = `${nginxLogFilePath}${formatStr}.log`
+    let logAbsolutePath = `${nginxLogFilePath}/fee.access.log`
     if (fs.existsSync(logAbsolutePath) === false) {
       that.log(`log文件不存在, 自动跳过 => ${logAbsolutePath}`)
       return
@@ -36,9 +37,11 @@ class NginxParseLog extends SaveLogBase {
     let onDataIn = async (data, next) => {
       logCounter++
       let content = data.toString()
-
+      this.log('生成的 content 为 => ', content)
       // 获取日志时间, 没有原始日志时间则直接跳过
       let logCreateAt = this.parseLogCreateAt(content)
+      console.log('日志创建时间为 => ', logCreateAt)
+      this.log(logCreateAt)
       if (_.isFinite(logCreateAt) === false || logCreateAt <= 0) {
         this.log('日志时间不合法, 自动跳过')
         return
@@ -77,10 +80,10 @@ class NginxParseLog extends SaveLogBase {
       let jsonWriteStreamByLogCreateAt = this.getWriteStreamClientByType(logCreateAt, LKafka.LOG_TYPE_JSON)
       jsonWriteStreamByLogCreateAt.write(JSON.stringify(parseResult))
       // 定期清一下
-      if (this.jsonWriteStreamPoolSize > 100 || this.rawLogWriteStreamPool.size > 100) {
-        // 每当句柄池满100后, 关闭除距离当前时间10分钟之内的所有文件流
-        this.autoCloseOldStream()
-      }
+      // if (this.jsonWriteStreamPoolSize > 100 || this.rawLogWriteStreamPool.size > 100) {
+      //   // 每当句柄池满100后, 关闭除距离当前时间10分钟之内的所有文件流
+      //   this.autoCloseOldStream()
+      // }
       next()
     }
     readLine(fs.createReadStream(logAbsolutePath), {
